@@ -51,18 +51,20 @@ export default function TenderDetailsPage() {
   useEffect(() => {
     if (!tenderId) return;
 
-    fetch(`https://staging.runway.org.in/api/tender/active/${tenderId}`)
+    const id = encodeURIComponent(decodeURIComponent(tenderId));
+
+    fetch(`https://staging.runway.org.in/api/tender/active/${id}`)
       .then((r) => r.json())
       .then(setDetails)
       .finally(() => setLoadingDetails(false));
   }, [tenderId]);
 
-  /* ---------------- Fetch BOQ ---------------- */
-
   useEffect(() => {
     if (!tenderId) return;
 
-    fetch(`https://staging.runway.org.in/api/tender/active/${tenderId}/boq`, {
+    const id = encodeURIComponent(decodeURIComponent(tenderId));
+
+    fetch(`https://staging.runway.org.in/api/tender/active/${id}/boq`, {
       headers: {
         Authorization: "Token 755897170ac7977fb484697219827657e5b4ae14",
       },
@@ -140,6 +142,25 @@ export default function TenderDetailsPage() {
           <section className="bg-white border rounded-xl p-6 mb-10">
             <h1 className="text-2xl font-bold">{details.title}</h1>
             <p className="text-gray-500">{details.organisation}</p>
+            {details.bid_submission_end_date < new Date().toISOString() ? (
+              <a
+                href={`https://runway.org.in/tenders/view/all/${details.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+                View on Runway
+              </a>
+            ) : (
+              <a
+                href={`https://runway.org.in/tenders/view/active/${details.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+                View on Runway
+              </a>
+            )}
           </section>
         )
       )}
